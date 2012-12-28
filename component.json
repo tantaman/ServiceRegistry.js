@@ -1,0 +1,15 @@
+{
+	"name": "ServiceRegistry.js",
+	"description": "Micro Services for Javascript",
+	"version": "0.1.1",
+	"author": "Tantaman",
+	"license": [
+	{
+		"type": "MIT",
+		"url": "http:s//github.com/tantaman/ServiceRegistry.js/blob/master/LICENSE"
+	}
+	],
+	"dependencies": {
+		"requirejs": "latest"
+	}
+}
