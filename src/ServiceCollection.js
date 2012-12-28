@@ -5,7 +5,11 @@ function (EventEmitter) {
 	var identity = function(p) {return p;};
 
 	function ServiceCollection(registry, lookup, converter) {
-		_.extend(this, new EventEmitter());
+		var temp = new EventEmitter();
+		for (var key in temp) {
+			this[key] = temp[key];
+		}
+
 		this._lookup = registry.normalize(lookup);
 		this._converter = converter || identity;
 		this._registry = registry;
@@ -14,7 +18,7 @@ function (EventEmitter) {
 		this._populateItems();
 	}
 
-	var proto = ServiceCollection.prorotype = Object.create(Array.prototype);
+	var proto = ServiceCollection.prototype = Object.create(Array.prototype);
 
 	proto._register = function() {
 		this._registry.on('registered', this._serviceRegistered, this);

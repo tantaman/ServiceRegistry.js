@@ -7,7 +7,8 @@ require.config({
 
 require([
 'spec/MultiMapTest',
-'spec/ServiceRegistryTest'
+'spec/ServiceRegistryTest',
+'spec/ServiceCollectionTest',
 ], function() {
   'use strict';
 
