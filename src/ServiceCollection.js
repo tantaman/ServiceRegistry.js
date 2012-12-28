@@ -1,4 +1,4 @@
-define(['EventEmitter'],
+define(['./EventEmitter'],
 function (EventEmitter) {
 	'use strict';
 

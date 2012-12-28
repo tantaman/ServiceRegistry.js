@@ -1,4 +1,4 @@
-define(['EventEmitter', 'MultiMap'],
+define(['./EventEmitter', './MultiMap'],
 function(EventEmitter, MultiMap) {
 	'use strict';
 	var identifier = 0;
