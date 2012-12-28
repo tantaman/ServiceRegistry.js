@@ -3,6 +3,25 @@ function(EventEmitter, MultiMap) {
 	'use strict';
 	var identifier = 0;
 
+	function Normalize(opts) {
+		var parms = {};
+		if (opts instanceof ServiceEntry) {
+			return opts.toParms();
+		}
+
+		if (typeof opts === 'string') {
+			parms.interfaces = [opts];
+		} else if (Array.isArray(opts)) {
+			parms.interfaces = opts;
+		} else {
+			parms = opts || parms;
+			if (!Array.isArray(parms.interfaces))
+				parms.interfaces = [parms.interfaces];
+		}
+
+		return parms;
+	};
+
 	function ServiceRegistry() {
 		this._services = new MultiMap();
 	}
@@ -28,14 +47,38 @@ function(EventEmitter, MultiMap) {
 
 		interfaces.forEach(function(iface) {
 			this._services.put(iface, entry);
-			this.emit('registered:' + iface, entry);
+			// this.emit('registered:' + iface, entry);
 		}, this);
 		this.emit('registered', entry);
+
+		return entry;
 	};
 
-	// proto.deregister = function() {
+	function serviceComparator(lhs, rhs) {
 
-	// }
+	}
+
+	proto.deregister = function(opts) {
+		opts = Normalize(opts);
+		this._deregister(opts);
+	};
+
+	proto._deregister = function(opts) {
+		var removed = [];
+		opts.interfaces.forEach(function(iface) {
+			var entries = this._services.get(iface);
+			entries.forEach(function (entry, idx) {
+				if (entry._matches(opts)) {
+					this._services.remove(iface, entry);
+					removed.push(entry);
+				}
+			}, this);
+		}, this);
+
+		removed.forEach(function(entry) {
+			this.emit('deregistered', entry);
+		}, this);
+	};
 
 	proto.getBest = function(opts) {
 		var entry = this.getBestEntry(opts);
@@ -48,20 +91,7 @@ function(EventEmitter, MultiMap) {
 		return this.get(opts)[0];
 	};
 
-	proto.normalize = function Normalize(opts) {
-		var parms = {};
-		if (typeof opts === 'string') {
-			parms.interfaces = [opts];
-		} else if (Array.isArray(opts)) {
-			parms.interfaces = opts;
-		} else {
-			parms = opts;
-			if (!Array.isArray(parms.interfaces))
-				parms.interfaces = [parms.interfaces];
-		}
-
-		return parms;
-	};
+	proto.normalize = Normalize;
 
 	proto.get = function(opts) {
 		var parms = this.normalize(opts);
@@ -111,19 +141,34 @@ function(EventEmitter, MultiMap) {
 		return items;
 	};
 
+	var entryId = 0;
 	function ServiceEntry(interfaces, meta, service) {
 		this._interfaces = interfaces;
 		this._meta = meta || {};
 		this._service = service;
+		this._id = ++entryId;
 	}
 
 	ServiceEntry.prototype = {
 		equals: function(other) {
-			return other._service.__registryIdentifier == this._service.__registryIdentifier;
+			return other._id === this._id;
+		},
+
+		toParms: function() {
+			return {
+				service: this._service,
+				interfaces: this._interfaces,
+				meta: this._meta,
+				id: this._id
+			};
 		},
 
 		service: function() {
 			return this._service;
+		},
+
+		interfaces: function() {
+			return this._interfaces;
 		},
 
 		meta: function() {
@@ -132,6 +177,14 @@ function(EventEmitter, MultiMap) {
 
 		matches: function(opts) {
 			opts = Normalize(opts);
+			return this._matches(opts);
+		},
+
+		_matches: function(opts) {
+			if (opts.id != null) {
+				return opts.id === this._id;
+			}
+
 			var ifSet = {};
 
 			opts.interfaces.forEach(function(iface) {

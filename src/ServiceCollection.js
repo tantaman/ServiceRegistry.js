@@ -2,7 +2,7 @@ define(['./EventEmitter'],
 function (EventEmitter) {
 	'use strict';
 
-	var identity = function(p) {return p;};
+	var serviceExtractor = function(p) {return p.service();};
 
 	function ServiceCollection(registry, lookup, converter) {
 		var temp = new EventEmitter();
@@ -11,7 +11,7 @@ function (EventEmitter) {
 		}
 
 		this._lookup = registry.normalize(lookup);
-		this._converter = converter || identity;
+		this._converter = converter || serviceExtractor;
 		this._registry = registry;
 
 		this._register();
@@ -22,12 +22,23 @@ function (EventEmitter) {
 
 	proto._register = function() {
 		this._registry.on('registered', this._serviceRegistered, this);
+		this._registry.on('deregistered', this._serviceDeregistered, this);
 	};
 
 	proto._serviceRegistered = function(entry) {
 		if (entry.matches(this._lookup)) {
 			var item = this._converter(entry);
 			this.push(item);
+		}
+	};
+
+	proto._serviceDeregistered = function(entry) {
+		console.log('Got de-reg event');
+		if (entry.matches(this._lookup)) {
+			var item = this._converter(entry);
+			var idx = this.indexOf(item);
+			if (idx >= 0)
+				this.splice(idx, 1);
 		}
 	};
 
