@@ -8,7 +8,7 @@ to relieve themselves of the responsibility of instantiating their dependencies.
 
 ```javascript
 
-// In components/localStorage.js:
+// ======== in components/localStorage.js ===========
 registry.register({
         interfaces: 'web.storage',
         meta: {
@@ -18,7 +18,7 @@ registry.register({
         }
       }, localStorageAdapter);
 
-// in components/filesystemApi.js:
+// ======== in components/filesystemApi.js ============
 registry.register({
   interfaces: 'web.storage',
   meta: {
@@ -28,7 +28,7 @@ registry.register({
   }
 }, filesystemAdapter);
 
-// in components/remoteStorage.js:
+// ======== in components/remoteStorage.js ============
 registry.register({
   interfaces: 'web.storage',
   meta: {
@@ -39,12 +39,13 @@ registry.register({
 }, remoteStorageAdapter);
 
 
-// in app/main.js:
+// ======== in app/main.js ================
 var storageProviders = registry.get({
   interfaces: 'web.storageProvider',
   meta: {
     location: 'local'
   }});
   
-// decide what local storage provider to use (say based on browser or size limit), or use them both.
+// decide what local storage provider to use
+// (say based on browser or size limit), or use them both.
 ```
