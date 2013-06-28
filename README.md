@@ -41,7 +41,7 @@ registry.register({
 
 // ======== in app/main.js ================
 var storageProviders = registry.get({
-  interfaces: 'web.storageProvider',
+  interfaces: 'web.storage',
   meta: {
     location: 'local'
   }});
