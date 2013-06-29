@@ -13,8 +13,7 @@ registry.register({
         interfaces: 'web.storage',
         meta: {
           limit: '5mb',
-          location: 'local',
-          browsers: ['webkit', 'moz', 'o']
+          location: 'local'
         }
       }, localStorageAdapter);
 
@@ -24,7 +23,6 @@ registry.register({
   meta: {
     limit: 'infinity',
     location: 'local',
-    browsers: ['webkit']
   }
 }, filesystemAdapter);
 
@@ -34,7 +32,6 @@ registry.register({
   meta: {
     limit: 'unk',
     location: 'remote',
-    browsers: ['webkit', 'moz', 'o']
   }
 }, remoteStorageAdapter);
 
@@ -47,5 +44,5 @@ var storageProviders = registry.get({
   }});
   
 // decide what local storage provider to use
-// (say based on browser or size limit), or use them both.
+// (say based on size limit), or use them both.
 ```
