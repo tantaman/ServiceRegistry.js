@@ -1,0 +1,27 @@
+{
+  "dependencies": {
+    "lodash": "latest"
+  },
+  "version": "0.1.0",
+  "name": "ServiceRegistry.js",
+  "description": "ServiceRegistry.js",
+  "main": "src/ServiceRegistry.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tantaman/ServiceRegistry.js.git"
+  },
+  "keywords": [
+    "services",
+    "osgi",
+    "module",
+    "modularity"
+  ],
+  "author": "Matt Crinklaw-Vogt",
+  "license": "MIT"
+}
