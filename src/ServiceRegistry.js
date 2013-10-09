@@ -2,7 +2,7 @@
 	'use strict';
 	var identifier = 0;
 
-	function init(EventEmitter, MultiMap) {
+	function init(EventEmitter, MultiMap, _) {
 		/**
 		 * @constructor
 		 */
@@ -50,7 +50,7 @@
 			opts.interfaces.forEach(function(iface) {
 				var entries = this._services.get(iface);
 				entries.forEach(function (entry, idx) {
-					if (entry._matches(opts)) {
+					if (entry.matches(opts)) {
 						this._services.remove(iface, entry);
 						removed.push(entry);
 					}
@@ -188,8 +188,8 @@
 	}
 
 	if (typeof module === 'object' && module.exports) {
-		module.exports = init(require('events').EventEmitter, require('./MultiMap'));
+		module.exports = init(require('events').EventEmitter, require('./MultiMap'), require('lodash'));
 	} else if (typeof define === 'function' && define.amd) {
-		define(['./EventEmitter', './MultiMap'], init);
+		define(['./EventEmitter', './MultiMap', 'lodash'], init);
 	}
 })();

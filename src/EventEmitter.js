@@ -3,8 +3,7 @@ The eventEmitter pattern from nodeJS ported to the browser.
 
 @author Matt Crinklaw
 */
-define(
-function() {
+define(function() {
 	function EventEmitter() {
 		if (!(this instanceof EventEmitter)) return new EventEmitter();
 		

@@ -19,7 +19,7 @@ function(ServiceCollection, ServiceRegistry) {
 
 			expect(collection.length).to.equal(1);
 
-			expect(collection[0]).to.equal(service);
+			expect(collection[0].service()).to.equal(service);
 
 			registry.register('a.bards.song', {});
 
@@ -43,7 +43,7 @@ function(ServiceCollection, ServiceRegistry) {
 			expect(collection.length).to.equal(services.length);
 
 			collection.forEach(function(srvc) {
-				expect(srvc).to.equal(services.shift());
+				expect(srvc.service()).to.equal(services.shift());
 			});
 		});
 

@@ -1,7 +1,8 @@
 require.config({
 	baseUrl: '../src',
 	paths: {
-		spec: '../test/spec'
+		spec: '../test/spec',
+    lodash: '../bower_components/lodash/dist/lodash'
 	}
 });
 
