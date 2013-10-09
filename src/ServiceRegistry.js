@@ -45,6 +45,21 @@
 			return this;
 		};
 
+		proto.on = function(topic, callback, context) {
+			EventEmitter.prototype.on.apply(this, arguments);
+			var parts = topic.split(':');
+			if (parts[0] == 'registered') {
+				if (parts.length == 1) {
+					console.log('immediate callback for naked registered not implemented.');
+				} else {
+					this._services.get(parts[1])
+					.forEach(function(entry) {
+						this.emit('registered:' + parts[1], entry);
+					}, this);
+				}
+			}
+		};
+
 		proto._deregister = function(opts) {
 			var removed = [];
 			opts.interfaces.forEach(function(iface) {
