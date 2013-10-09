@@ -1,4 +1,4 @@
-define(function() {
+function() {
 	"use strict";
 	function MultiMap() {
 		this._map = {};
@@ -71,5 +71,9 @@ define(function() {
 		}
 	};
 
-	return MultiMap;
-});
+	if (typeof module === 'object' && module.exports) {
+		module.exports = MultiMap;
+	} else if (typeof define === 'function' && define.amd) {
+		define(function() { return MultiMap; });
+	}
+})();
