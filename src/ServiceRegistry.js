@@ -47,7 +47,7 @@ function(EventEmitter, MultiMap, _) {
 	};
 
 	proto.on = function(topic, callback, context) {
-		EventEmitter.prototype.on.apply(this, arguments);
+		var result = EventEmitter.prototype.on.apply(this, arguments);
 		var parts = topic.split(':');
 		if (parts[0] == 'registered') {
 			if (parts.length == 1) {
@@ -59,6 +59,7 @@ function(EventEmitter, MultiMap, _) {
 				}, this);
 			}
 		}
+		return result;
 	};
 
 	proto._deregister = function(opts) {
