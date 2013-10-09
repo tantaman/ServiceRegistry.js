@@ -1,9 +1,9 @@
-/**
-The eventEmitter pattern from nodeJS ported to the browser.
-
-@author Matt Crinklaw
-*/
+if (typeof define !== 'function') { var define = require('amdefine')(module) }
 define(function() {
+	/**
+	 * The eventEmitter pattern from nodeJS ported to the browser.
+	 * @author Matt Crinklaw
+	 */
 	function EventEmitter() {
 		if (!(this instanceof EventEmitter)) return new EventEmitter();
 		
