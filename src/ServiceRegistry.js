@@ -3,25 +3,9 @@ function(EventEmitter, MultiMap) {
 	'use strict';
 	var identifier = 0;
 
-	function Normalize(opts) {
-		var parms = {};
-		if (opts instanceof ServiceEntry) {
-			return opts.toParms();
-		}
-
-		if (typeof opts === 'string') {
-			parms.interfaces = [opts];
-		} else if (Array.isArray(opts)) {
-			parms.interfaces = opts;
-		} else {
-			parms = opts || parms;
-			if (!Array.isArray(parms.interfaces))
-				parms.interfaces = [parms.interfaces];
-		}
-
-		return parms;
-	};
-
+	/**
+	 * @constructor
+	 */
 	function ServiceRegistry() {
 		this._services = new MultiMap();
 	}
@@ -47,20 +31,18 @@ function(EventEmitter, MultiMap) {
 
 		interfaces.forEach(function(iface) {
 			this._services.put(iface, entry);
-			// this.emit('registered:' + iface, entry);
+			this.emit('registered:' + iface, entry);
 		}, this);
 		this.emit('registered', entry);
 
-		return entry;
+		return this;
 	};
 
-	function serviceComparator(lhs, rhs) {
-
-	}
-
 	proto.deregister = function(opts) {
-		opts = Normalize(opts);
+		opts = this.normalize(opts);
 		this._deregister(opts);
+
+		return this;
 	};
 
 	proto._deregister = function(opts) {
@@ -91,7 +73,20 @@ function(EventEmitter, MultiMap) {
 		return this.get(opts)[0];
 	};
 
-	proto.normalize = Normalize;
+	var Normalize = proto.normalize = function Normalize(opts) {
+		var parms = {};
+		if (typeof opts === 'string') {
+			parms.interfaces = [opts];
+		} else if (Array.isArray(opts)) {
+			parms.interfaces = opts;
+		} else {
+			parms = opts;
+			if (!Array.isArray(parms.interfaces))
+				parms.interfaces = [parms.interfaces];
+		}
+
+		return parms;
+	};
 
 	proto.get = function(opts) {
 		var parms = this.normalize(opts);
@@ -141,34 +136,19 @@ function(EventEmitter, MultiMap) {
 		return items;
 	};
 
-	var entryId = 0;
 	function ServiceEntry(interfaces, meta, service) {
 		this._interfaces = interfaces;
 		this._meta = meta || {};
 		this._service = service;
-		this._id = ++entryId;
 	}
 
 	ServiceEntry.prototype = {
 		equals: function(other) {
-			return other._id === this._id;
-		},
-
-		toParms: function() {
-			return {
-				service: this._service,
-				interfaces: this._interfaces,
-				meta: this._meta,
-				id: this._id
-			};
+			return other._service.__registryIdentifier == this._service.__registryIdentifier;
 		},
 
 		service: function() {
 			return this._service;
-		},
-
-		interfaces: function() {
-			return this._interfaces;
 		},
 
 		meta: function() {
@@ -177,14 +157,6 @@ function(EventEmitter, MultiMap) {
 
 		matches: function(opts) {
 			opts = Normalize(opts);
-			return this._matches(opts);
-		},
-
-		_matches: function(opts) {
-			if (opts.id != null) {
-				return opts.id === this._id;
-			}
-
 			var ifSet = {};
 
 			opts.interfaces.forEach(function(iface) {
@@ -196,12 +168,11 @@ function(EventEmitter, MultiMap) {
 			});
 		},
 
-		// TODO: this should be a deep comparison
 		metaMatches: function(meta) {
 			if (meta == null) return true;
 
 			for (var key in meta) {
-				if (meta[key] != this._meta[key])
+				if (!_.isEqual(meta[key], this._meta[key]))
 					return false;
 			}
 
